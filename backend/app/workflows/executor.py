@@ -1,8 +1,8 @@
 import json
 import os
-from steps.zip_step import ZipStep
-from steps.web_step import WebStep
-from steps.email_step import EmailStep
+from workflows.steps.zip_step import ZipStep
+from workflows.steps.web_step import WebStep
+from workflows.steps.email_step import EmailStep
 
 # Mapping step type → classe Python
 STEP_CLASSES = {

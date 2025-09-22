@@ -17,17 +17,15 @@ import { Label } from '@/components/ui/label'
 import { Steps } from '@/types/data'
 import EmailWriter from '@/components/automation/EmailWriter/EmailWriter.vue'
 import { Button } from '@/components/ui/button'
+import { useWorkflow } from '@/composables/useWorkflow'
+import { log } from 'console'
 const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } = useVueFlow()
 
-const nodes = ref<any>([])
-
-const edges = ref([])
+const { nodes, edges } = useWorkflow()
 
 onConnect((connection) => {
   addEdges(connection)
 })
-
-
 
 
 let nodeId = 0
@@ -56,10 +54,12 @@ const isParamsModalOpen = ref<boolean>(false)
 
 const onNodeClick = ({event, node}: any) => {
   selectedNode.value = node.data.step
+  
   selectedNodeId.value = node.id
-  console.log(node.data);
   
   isParamsModalOpen.value = !isParamsModalOpen.value
+
+  params.value = node.data.params || {}
 }
 
 const workflow = ref({
@@ -74,19 +74,17 @@ const workflow = ref({
  */
 const handleNodeParams = () => {
   if(!selectedNode.value) return
-  params.value = {}
   const nodeIndex = nodes.value.findIndex(
     (n: any) => n.id === selectedNodeId.value
   )
-
+  
   nodes.value[nodeIndex].data.params = { ...params.value }
-  console.log(params.value);
   
   isParamsModalOpen.value = false
+  params.value = {}
 }
 
 const handleDialogParams = () => {
-  
   handleNodeParams()
 }
 
@@ -112,7 +110,7 @@ const params = ref<Record<string, any>>({})
         <form v-if="selectedNode" class="flex flex-col gap-2">
           <div class="flex flex-col gap-2" v-for="param in selectedNode.params" :key="param.key">
             <Label v-if="param.label">{{ param.label }}</Label>
-            
+              
             <!-- Vérification type guard pour ComponentParam -->
             <component v-if="'component' in param" :is="EmailWriter" />
             <Input v-model="params[param.key]" v-else/>

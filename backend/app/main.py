@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from executor import WorkflowExecutor
+from workflows.executor import WorkflowExecutor
 
 app = Flask(__name__)
 
