@@ -1,0 +1,35 @@
+{
+  "name": "Envoyer rapport",
+  "description": "Workflow simple pour zipper un dossier de rapports et l'envoyer par email",
+  "steps": [
+    {
+      "id": "step1",
+      "type": "zip",
+      "params": {
+        "input_folder": "input_reports",
+        "output_file": "output/report.zip"
+      }
+    },
+    {
+        "id": "step2",
+        "type": "web",
+        "params": {
+            "url": "http://localhost:5000/test",
+            "method": "GET"
+        }
+    },
+    {
+      "type": "email",
+      "params": {
+        "to": "destinataire@example.com",
+        "subject": "Rapport automatique",
+        "body": "Voici le rapport du jour",
+        "attachments": ["output/report.zip"],
+        "smtp_server": "localhost",
+        "smtp_port": 1025,
+        "username": "",
+        "password": ""
+      }
+    }
+  ]
+}
