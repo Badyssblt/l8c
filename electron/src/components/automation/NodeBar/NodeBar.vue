@@ -1,7 +1,7 @@
 <template>
     <Dialog>
     <DialogTrigger>
-      <Button>Créer l'automatisation</Button>
+      <Button @click="createWorkflow">Créer l'automatisation</Button>
     </DialogTrigger>
     <DialogContent>
       <DialogTitle>
@@ -19,6 +19,7 @@
                 <p class="font-semibold">{{  data.category  }}</p>
             </CollapsibleTrigger>
             <CollapsibleContent class="px-4">
+              
                 <div v-for="step in data.steps" :draggable="true" @dragstart="onDragstart($event, step)">
                     <p>{{  step.name  }}</p>
                 </div>
@@ -44,7 +45,9 @@ import {
 import Input from '@/components/ui/input/Input.vue'
 import Label from '@/components/ui/label/Label.vue'
 import Button from '@/components/ui/button/Button.vue'
+import { useWorkflow } from "@/composables/useWorkflow";
 
+const { createWorkflow } = useWorkflow()
 
 const onDragstart = (event, step) => {
     event.dataTransfer.setData("application/vueflow", JSON.stringify(step))

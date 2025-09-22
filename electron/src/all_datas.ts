@@ -7,6 +7,7 @@ export const allDatas: Data[] = [
       {
         name: "Envoyer un email",
         type: "steps",
+        key: "email",
         params: [
           {
             key: "to",
@@ -37,16 +38,34 @@ export const allDatas: Data[] = [
       {
         name: "Zipper un dossier",
         type: "steps",
+        key: "zip",
         params: [
           {
             key: "input_folder",
             label: "Dossier à zipper",
-            type: "text"
+            type: "folder"
           },
           {
             label: "Dossier de destination",
             key: "output_file",
-            type: "text"
+            type: "folder"
+          }
+        ]
+      },
+      {
+        name: "Déplacer un dossier",
+        type: "steps",
+        key: "move_folder",
+        params: [
+          {
+            key: "input_folder",
+            label: "Dossier source",
+            component: "FolderSelector"
+          },
+          {
+            label: "Dossier de destination",
+            key: "output_file",
+            component: "FolderSelector"
           }
         ]
       },
@@ -58,6 +77,7 @@ export const allDatas: Data[] = [
       {
         name: "Appeler une API",
         type: "steps",
+        key: "web",
         params: [
           {
             label: "URL",

@@ -19,12 +19,15 @@ import EmailWriter from '@/components/automation/EmailWriter/EmailWriter.vue'
 import { Button } from '@/components/ui/button'
 import { useWorkflow } from '@/composables/useWorkflow'
 import { log } from 'console'
+import { useNode } from '@/composables/useNode'
 const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } = useVueFlow()
 
 const { nodes, edges } = useWorkflow()
+const { getNode, editNode } = useNode()
 
 onConnect((connection) => {
   addEdges(connection)
+  edges.value.push(connection)
 })
 
 
@@ -58,7 +61,7 @@ const onNodeClick = ({event, node}: any) => {
   selectedNodeId.value = node.id
   
   isParamsModalOpen.value = !isParamsModalOpen.value
-
+  
   params.value = node.data.params || {}
 }
 
@@ -77,9 +80,13 @@ const handleNodeParams = () => {
   const nodeIndex = nodes.value.findIndex(
     (n: any) => n.id === selectedNodeId.value
   )
+
+  const node = getNode(nodeIndex)
   
-  nodes.value[nodeIndex].data.params = { ...params.value }
-  
+  editNode(nodeIndex, {
+    params: {...params.value}
+  })
+    
   isParamsModalOpen.value = false
   params.value = {}
 }
@@ -110,9 +117,8 @@ const params = ref<Record<string, any>>({})
         <form v-if="selectedNode" class="flex flex-col gap-2">
           <div class="flex flex-col gap-2" v-for="param in selectedNode.params" :key="param.key">
             <Label v-if="param.label">{{ param.label }}</Label>
-              
             <!-- Vérification type guard pour ComponentParam -->
-            <component v-if="'component' in param" :is="EmailWriter" />
+            <component v-if="'component' in param" :is="param.component" />
             <Input v-model="params[param.key]" v-else/>
           </div>
           <Button type="button" @click="handleNodeParams">Enregistrer</Button>

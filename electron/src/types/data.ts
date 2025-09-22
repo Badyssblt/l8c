@@ -9,4 +9,5 @@ export type Steps = {
   name: string | null;
   type: string | null;
   params: Param[];
+  key: string;
 };

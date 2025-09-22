@@ -9,8 +9,8 @@ export const useNode = () => {
    * @param id node id
    * @returns node | undefined
    */
-  const getNode = (id: number): Node[] => {
-    return nodes.value.find((n: any) => n.id === id)
+  const getNode = (id: number): Node => {
+    return nodes.value[id]
   }
 
   /**
@@ -18,10 +18,8 @@ export const useNode = () => {
    * @param id node id
    * @param newData nouvelles données à fusionner
    */
-  const editNode = (id: number, newData: any) => {
-    const nodeIndex = nodes.value.findIndex((n: any) => n.id === id)
-    if (nodeIndex === -1) return // Node non trouvé
-
+  const editNode = (nodeIndex: number, newData: any) => {
+    
     nodes.value[nodeIndex].data = { 
       ...nodes.value[nodeIndex].data, 
       ...newData 

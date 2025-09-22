@@ -1,0 +1,15 @@
+meta {
+  name: Run Workflow
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseURL}}/run/workflows/mon_automatisation.json
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

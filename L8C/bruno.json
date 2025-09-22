@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "L8C",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
