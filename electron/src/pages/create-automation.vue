@@ -6,24 +6,21 @@ import NodeBar from '@/components/automation/NodeBar/NodeBar.vue'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Steps } from '@/types/data'
-import EmailWriter from '@/components/automation/EmailWriter/EmailWriter.vue'
 import { Button } from '@/components/ui/button'
 import { useWorkflow } from '@/composables/useWorkflow'
-import { log } from 'console'
 import { useNode } from '@/composables/useNode'
+import { useComponentRegistry } from '@/composables/useRegistry'
 const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } = useVueFlow()
 
 const { nodes, edges } = useWorkflow()
 const { getNode, editNode } = useNode()
+const { getComponent } = useComponentRegistry()
 
 onConnect((connection) => {
   addEdges(connection)
@@ -118,7 +115,7 @@ const params = ref<Record<string, any>>({})
           <div class="flex flex-col gap-2" v-for="param in selectedNode.params" :key="param.key">
             <Label v-if="param.label">{{ param.label }}</Label>
             <!-- Vérification type guard pour ComponentParam -->
-            <component v-if="'component' in param" :is="param.component" />
+            <component v-if="'component' in param" :is="getComponent(param.component)" />
             <Input v-model="params[param.key]" v-else/>
           </div>
           <Button type="button" @click="handleNodeParams">Enregistrer</Button>
