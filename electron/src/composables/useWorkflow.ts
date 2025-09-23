@@ -1,11 +1,19 @@
-import { ref } from 'vue'
+import { Ref, ref } from 'vue'
 import { Steps } from '@/types/data'
 import { NodeLocal } from '@/types/node'
 import { Workflow } from '@/types/workflow'
 import { useApi } from './useApi'
-
 const nodes = ref<NodeLocal[]>([])
 const edges = ref<any[]>([])
+
+
+const workflow: Ref = ref<Workflow>({
+  name: "",
+  description: "",
+  steps: [] as Steps[]
+} satisfies Workflow);
+
+const workflows: Ref = ref<Workflow[]>([])
 
 export const useWorkflow = () => {
   let nodeId = 0
@@ -59,6 +67,7 @@ export const useWorkflow = () => {
 
     return orderedNodes
   }
+  
 
   /**
    * Générer l'objet du workflow
@@ -68,13 +77,6 @@ export const useWorkflow = () => {
     // Récupère les nodes du workflow courant
     const orderedNodes: NodeLocal[] = getOrderedNode()
     
-    let workflow: Workflow = {
-      name: "",
-      description: "",
-      steps: [
-
-      ]
-    }
 
     let step = null
     
@@ -85,15 +87,16 @@ export const useWorkflow = () => {
           type: node.data.step.key,
           params: node.data.params
         }
-
-        workflow.steps.push(step)
         
-        post("/workflows", workflow)
+        workflow.value.steps.push(step)
+        
+        
     })
 
+    post("/workflows", workflow.value)
     
     
   }
 
-  return { nodes, edges, addNode, addEdge, createWorkflow }
+  return { nodes, edges, addNode, addEdge, createWorkflow, workflow, workflows }
 }

@@ -1,7 +1,7 @@
 <template>
     <Dialog>
     <DialogTrigger>
-      <Button @click="createWorkflow">Créer l'automatisation</Button>
+      <Button>Créer l'automatisation</Button>
     </DialogTrigger>
     <DialogContent>
       <DialogTitle>
@@ -9,8 +9,9 @@
       </DialogTitle>
       <div>
         <Label>Nom</label>
-        <Input />
+        <Input v-model="workflow.name" />
       </div>
+      <Button type="button" @click="createWorkflow">Créer</Button>
     </DialogContent>
   </Dialog>
     <div class="w-42 flex flex-col gap-4">
@@ -47,7 +48,8 @@ import Label from '@/components/ui/label/Label.vue'
 import Button from '@/components/ui/button/Button.vue'
 import { useWorkflow } from "@/composables/useWorkflow";
 
-const { createWorkflow } = useWorkflow()
+const { createWorkflow, workflow } = useWorkflow()
+
 
 const onDragstart = (event, step) => {
     event.dataTransfer.setData("application/vueflow", JSON.stringify(step))

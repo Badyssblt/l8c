@@ -1,12 +1,13 @@
 <template>
-  <nav>
-    <RouterLink to="/create-automation">Automatisation</RouterLink>
-  </nav>
-  <main>
+  <div class="flex">
+    <NavBar/>
+  <main class="flex-1">
     <RouterView/>
   </main>
+  </div>
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router';
+import NavBar from './components/automation/NavBar/NavBar.vue';
 </script>

@@ -7,11 +7,24 @@ from utils.format import to_snake_case
 
 
 app = Flask(__name__)
-CORS(app)  # ou CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app)
 
 @app.route("/workflows", methods=["GET"])
 def list_workflows():
-    return jsonify(os.listdir("workflows/"))
+    workflows_dir = "workflows/"
+    workflows = []
+
+    # Parcours des fichiers dans le dossier
+    for filename in os.listdir(workflows_dir):
+        if filename.endswith(".json"):
+            file_path = os.path.join(workflows_dir, filename)
+            with open(file_path, "r", encoding="utf-8") as f:
+                try:
+                    workflows.append(json.load(f))
+                except json.JSONDecodeError:
+                    workflows.append({"error": f"Fichier {filename} invalide JSON"})
+    
+    return jsonify(workflows)
 
 @app.post('/workflows')
 def create_workflow():
@@ -38,9 +51,30 @@ def create_workflow():
 
 @app.route("/run/<workflow_name>", methods=["GET"])
 def run_workflow(workflow_name):
-    executor = WorkflowExecutor(f"workflows/{workflow_name}")
+    workflows_dir = "workflows/"
+    matched_file = None
+
+    # On cherche le fichier qui contient le workflow au bon nom
+    for filename in os.listdir(workflows_dir):
+        if filename.endswith(".json"):
+            file_path = os.path.join(workflows_dir, filename)
+            with open(file_path, "r", encoding="utf-8") as f:
+                try:
+                    wf = json.load(f)
+                    if wf.get("name") == workflow_name:
+                        matched_file = file_path
+                        break
+                except json.JSONDecodeError:
+                    continue
+
+    if not matched_file:
+        return jsonify({"error": f"Workflow '{workflow_name}' not found"}), 404
+
+    # Exécuter avec le WorkflowExecutor
+    executor = WorkflowExecutor(matched_file)
     result = executor.run()
     return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

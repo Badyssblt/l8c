@@ -3,12 +3,13 @@ import os
 from workflows.steps.zip_step import ZipStep
 from workflows.steps.web_step import WebStep
 from workflows.steps.email_step import EmailStep
-
+from workflows.steps.move_file_step import MoveFileStep
 # Mapping step type → classe Python
 STEP_CLASSES = {
     "zip": ZipStep,
     "web": WebStep,
-    "email": EmailStep
+    "email": EmailStep,
+    "move_folder": MoveFileStep
 }
 
 class WorkflowExecutor:
