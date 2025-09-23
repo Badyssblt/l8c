@@ -83,6 +83,9 @@ const handleNodeParams = () => {
   editNode(nodeIndex, {
     params: {...params.value}
   })
+
+  console.log(params.value);
+  
     
   isParamsModalOpen.value = false
   params.value = {}
@@ -115,7 +118,7 @@ const params = ref<Record<string, any>>({})
           <div class="flex flex-col gap-2" v-for="param in selectedNode.params" :key="param.key">
             <Label v-if="param.label">{{ param.label }}</Label>
             <!-- Vérification type guard pour ComponentParam -->
-            <component v-if="'component' in param" :is="getComponent(param.component)" />
+            <component v-if="'component' in param" :is="getComponent(param.component)" v-model="params[param.key]" />
             <Input v-model="params[param.key]" v-else/>
           </div>
           <Button type="button" @click="handleNodeParams">Enregistrer</Button>

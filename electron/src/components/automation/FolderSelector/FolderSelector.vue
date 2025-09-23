@@ -1,36 +1,40 @@
-<template>
-    <div class="flex flex-col items-start space-y-2">
-        <label class="font-semibold text-gray-700">Sélectionner un dossier</label>
-        <div class="flex items-center space-x-2">
-            <input
-                type="text"
-                :value="folderPath"
-                readonly
-                class="w-64 px-3 py-2 border rounded bg-gray-100 text-gray-700 focus:outline-none"
-                placeholder="Aucun dossier sélectionné"
-            />
-            <button
-            type="button"
-                @click="selectFolder"
-                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            >
-                Parcourir...
-            </button>
-        </div>
-    </div>
-</template>
+<script setup lang="ts">
+import { ref, defineProps, defineEmits } from 'vue'
 
-<script setup>
-import { ref } from 'vue'
+const props = defineProps<{
+  modelValue?: { path: string, recursive?: boolean }
+}>()
 
-const folderPath = ref('')
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: { path: string, recursive?: boolean }): void
+}>()
 
-async function selectFolder() {
-    // Utilise l'API IPC d'Electron pour ouvrir la boîte de dialogue de sélection de dossier
-    const { ipcRenderer } = window.require('electron')
-    const result = await ipcRenderer.invoke('select-folder')
-    if (result && !result.canceled && result.filePaths && result.filePaths[0]) {
-        folderPath.value = result.filePaths[0]
-    }
+// Ref interne pour stocker la valeur si parent non fourni
+const internalValue = ref<{ path: string; recursive?: boolean }>(
+  props.modelValue ?? { path: '', recursive: false }
+)
+
+function onSelect(e: Event) {
+  const files = (e.target as HTMLInputElement).files
+  if (files && files.length > 0) {
+    internalValue.value.path = files[0].path
+    emit('update:modelValue', { ...internalValue.value })
+  }
+}
+
+function onToggleRecursive(e: Event) {
+  internalValue.value.recursive = (e.target as HTMLInputElement).checked
+  emit('update:modelValue', { ...internalValue.value })
 }
 </script>
+
+<template>
+  <div class="flex flex-col space-y-2">
+    <input type="file" webkitdirectory directory @change="onSelect" />
+    <label>
+      <input type="checkbox" :checked="internalValue.recursive" @change="onToggleRecursive" />
+      Inclure sous-dossiers
+    </label>
+    <span class="text-sm text-gray-600">{{ internalValue.path }}</span>
+  </div>
+</template>
