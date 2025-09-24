@@ -5,7 +5,7 @@ class MoveFileStep:
         self.input_folder = input_folder
         self.output_folder = output_folder
 
-    def run(self):
+    def run(self, data=None):
         shutil.move(self.input_folder, self.output_folder)
         print("Dossier déplacer avec succès")
     

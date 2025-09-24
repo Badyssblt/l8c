@@ -1,0 +1,1 @@
+{"name": "deplacer", "description": "", "steps": [{"id": "step0", "type": "move_folder", "params": {"input_folder": "/home/badyss/Bureau/TPNote", "output_folder": "/home/badyss/Images"}}]}

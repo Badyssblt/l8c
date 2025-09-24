@@ -64,7 +64,7 @@ export const allDatas: Data[] = [
           },
           {
             label: "Dossier de destination",
-            key: "output_file",
+            key: "output_folder",
             component: "FolderSelector"
           }
         ]
