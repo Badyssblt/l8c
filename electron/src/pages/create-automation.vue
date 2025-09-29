@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { useWorkflow } from '@/composables/useWorkflow'
 import { useNode } from '@/composables/useNode'
 import { useComponentRegistry } from '@/composables/useRegistry'
-const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject } = useVueFlow()
+const { onInit, onNodeDragStop, onConnect, addEdges, setViewport, toObject, project, applyNodeChanges } = useVueFlow()
 
 const { nodes, edges } = useWorkflow()
 const { getNode, editNode } = useNode()
@@ -30,15 +30,16 @@ onConnect((connection) => {
 
 let nodeId = 0
 
-const onDrop = (event: any) => {
-  const step = JSON.parse(event.dataTransfer.getData("application/vueflow"))
+
+const onDrop = (event: DragEvent) => {
+  const step = JSON.parse(event.dataTransfer?.getData("application/vueflow") || "{}")
   const bounds = event.currentTarget.getBoundingClientRect()
 
-  // Position exacte de la souris
-  const position = {
+  // Position souris relative au container
+  const position = project({
     x: event.clientX - bounds.left,
     y: event.clientY - bounds.top,
-  }
+  })
 
   nodes.value.push({
     id: (nodeId++).toString(),
@@ -47,6 +48,7 @@ const onDrop = (event: any) => {
     data: { label: step.name, step },
   })
 }
+
 
 const selectedNode = ref<Steps>()
 const selectedNodeId = ref<number>()
@@ -67,6 +69,12 @@ const workflow = ref({
   description: "",
   steps: [] as Steps[]
 })
+
+const onNodesChange = (changes: any[]) => {
+  // Applique les changements sur chaque node existant sans remplacer le tableau
+  const newNodes = applyNodeChanges(changes, [...nodes.value])
+  nodes.value.splice(0, nodes.value.length, ...newNodes)
+}
 
 
 /**
@@ -102,7 +110,7 @@ const params = ref<Record<string, any>>({})
   
   <div class="flex h-scren">
     <div class="h-screen w-full" @dragover.prevent @drop="onDrop">
-      <VueFlow :nodes="nodes" :edges="edges" @node-click="onNodeClick">
+      <VueFlow :nodes="nodes" :edges="edges" @node-context-menu="onNodeClick" @nodes-change="onNodesChange">
           <Background variant="dots"/>
       </VueFlow>
     </div>
